@@ -272,41 +272,6 @@ ggplot(summary_by_chemical, aes(x = reorder(Chemical, -Mean), y = Mean, fill = C
   theme_minimal() +
   coord_flip()
 
-ggplot(strawb_sur_c_3_chem, aes(x = Category, fill = Category)) +
-  geom_bar() +
-  labs(title = "Count of Observations by Category", x = "Category", y = "Count") +
-  theme_minimal()
-
-
-ggplot(strawb_sur_c_3_chem, aes(x = Category, y = Value, fill = Category)) +
-  geom_boxplot() +
-  labs(title = "Distribution of Values by Category", x = "Category", y = "Value (lb/acre)") +
-  theme_minimal()
-
-mean_values_by_category <- strawb_sur_c_3_chem %>%
-  group_by(Category) %>%
-  summarise(Mean_Value = mean(Value, na.rm = TRUE))
-
-ggplot(mean_values_by_category, aes(x = Category, y = Mean_Value, fill = Category)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Mean Value by Category", x = "Category", y = "Mean Value (lb/acre)") +
-  theme_minimal()
-
-mean_values_by_category <- strawb_sur_c_3_chem %>%
-  group_by(Category) %>%
-  summarise(Mean_Value = mean(Value, na.rm = TRUE))
-
-ggplot(mean_values_by_category, aes(x = Category, y = Mean_Value, fill = Category)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Mean Value by Category", x = "Category", y = "Mean Value (lb/acre)") +
-  theme_minimal()
-
-# stacked bar plot for chemical distribution across categories 
-# This shows the count of different chemicals in each category
-ggplot(strawb_sur_c_3_chem, aes(x = Category, fill = Chemical)) +
-  geom_bar(position = "stack") +
-  labs(title = "Chemical Distribution Across Categories", x = "Category", y = "Count") +
-  theme_minimal()
 
 # Boxplot : value distribution of chemicals per category 
 # This shows how chemical usage differs across categories 
@@ -315,11 +280,6 @@ ggplot(strawb_sur_c_3_chem, aes(x = Category, y = Value, fill = Chemical)) +
   labs(title = "Chemical Usage by Category", x = "Category", y = "Value (lb/acre)") +
   theme_minimal()
 # 2 commas 
-
-
-
-
-
 
 
 # Create a new column 'commas' that counts the number of commas in 'Data Item'
@@ -412,26 +372,6 @@ ggplot(strawb_sur_f_3_chem, aes(x = as.factor(Year), y = Value, fill = Chemical)
   labs(title = "Chemical Usage Over Years", x = "Year", y = "Value (lb/acre)") +
   theme_minimal()
 
-ggplot(summary_by_chemical, aes(x = reorder(Chemical, -Mean), y = Mean, fill = Chemical)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Average Chemical Usage by Type", x = "Chemical Type", y = "Average Value (lb/acre)") +
-  theme_minimal() +
-  coord_flip()
-
-ggplot(strawb_sur_f_3_chem, aes(x = Category, fill = Category)) +
-  geom_bar() +
-  labs(title = "Count of Observations by Category", x = "Category", y = "Count") +
-  theme_minimal()
-
-ggplot(strawb_sur_f_3_chem, aes(x = Category, y = Value, fill = Category)) +
-  geom_boxplot() +
-  labs(title = "Distribution of Values by Category", x = "Category", y = "Value (lb/acre)") +
-  theme_minimal()
-
-ggplot(strawb_sur_f_3_chem, aes(x = Category, fill = Chemical)) +
-  geom_bar(position = "stack") +
-  labs(title = "Chemical Distribution Across Categories", x = "Category", y = "Count") +
-  theme_minimal()
 
 ggplot(strawb_sur_f_3_chem, aes(x = Category, y = Value, fill = Chemical)) +
   geom_boxplot() +
@@ -481,14 +421,6 @@ summary(income_cen_c$Value)
 summary(income_cen_c$`CV (%)`)
 str(income_cen_c)
 
-# 1. Histogram & Density Plot (Distribution of Income)
-ggplot(income_cen_c, aes(x = Value)) +
-  scale_x_continuous(labels = scales::comma) +  # Format x-axis
-  scale_y_continuous(labels = scales::comma) +  # Format y-axis
-  geom_histogram(binwidth = 50000, fill = "steelblue", color = "black", alpha = 0.7) +
-  labs(title = "Distribution of Income (Value)", x = "Income ($)", y = "Frequency") +
-  theme_minimal()
-
 ggplot(income_cen_c, aes(x = Value)) +
   geom_density(fill = "lightblue", alpha = 0.5) +
   scale_x_continuous(labels = scales::comma) +  # Format x-axis
@@ -496,11 +428,6 @@ ggplot(income_cen_c, aes(x = Value)) +
   labs(title = "Density Plot of Income", x = "Income ($)", y = "Density") +
   theme_minimal()
 
-# 2. Box Plot (Income Across Types)
-ggplot(income_cen_c, aes(x = Type, y = Value)) +
-  geom_boxplot(fill = "orange", outlier.color = "red") +
-  labs(title = "Income Distribution Across Categories", x = "Category", y = "Income ($)") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 # 3. Bar Chart (Income by Type)
 ggplot(income_cen_c, aes(x = Type, y = Value, fill = Type)) +
@@ -508,23 +435,6 @@ ggplot(income_cen_c, aes(x = Type, y = Value, fill = Type)) +
   geom_bar(stat = "identity") +
   labs(title = "Income by Type", x = "Type", y = "Income ($)") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-# 4. Scatter Plot (Income vs CV %)
-ggplot(income_cen_c, aes(x = `CV (%)`, y = Value)) +
-  geom_point(color = "blue", alpha = 0.6) +
-  labs(title = "Income vs Coefficient of Variation (CV %)", x = "CV (%)", y = "Income ($)") +
-  theme_minimal()
-
-# Scatter Plot (Income vs CV %) with Type as Color and formatted y-axis
-ggplot(income_cen_c, aes(x = `CV (%)`, y = Value, color = Type)) +
-  geom_point(alpha = 0.7, size = 3) +
-  scale_y_continuous(labels = scales::comma) +  # Format y-axis
-  labs(title = "Value vs Coefficient of Variation (CV %) by Type",
-       x = "CV (%)",
-       y = "Value ($)",
-       color = "Type") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
 
 library(dplyr)
 
@@ -536,11 +446,6 @@ summary_c_values <- income_cen_c |> group_by(Type) |> summarise(
   CV_Avg = mean(`CV (%)`, na.rm = TRUE)
 )
 print(summary_c_values)
-
-
-
-
-
 
 
 #### 
@@ -587,54 +492,14 @@ summary(income_cen_f$Value)
 summary(income_cen_f$`CV (%)`)
 str(income_cen_f)
 
-
-
-
-ggplot(income_cen_f, aes(x = Value)) +
-  scale_x_continuous(labels = scales::comma) +
-  geom_histogram(binwidth = 50000, fill = "steelblue", color = "black", alpha = 0.7) +
-  labs(title = "Distribution of Income (Value) for Florida", x = "Income ($)", y = "Frequency") +
-  theme_minimal()
-
 ggplot(income_cen_f, aes(x = Value)) +
   geom_density(fill = "lightblue", alpha = 0.5) +
   scale_x_continuous(labels = scales::comma) +
   labs(title = "Density Plot of Income for Florida", x = "Income ($)", y = "Density") +
   theme_minimal()
 
-ggplot(income_cen_f, aes(x = Type, y = Value)) +
-  geom_boxplot(fill = "orange", outlier.color = "red") +
-  labs(title = "Income Distribution Across Categories for Florida", x = "Category", y = "Income ($)") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
 ggplot(income_cen_f, aes(x = Type, y = Value, fill = Type)) +
   scale_y_continuous(labels = scales::comma) +
   geom_bar(stat = "identity") +
   labs(title = "Income by Type for Florida", x = "Type", y = "Income ($)") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-ggplot(income_cen_f, aes(x = `CV (%)`, y = Value)) +
-  geom_point(color = "blue", alpha = 0.6) +
-  labs(title = "Income vs Coefficient of Variation (CV %) for Florida", x = "CV (%)", y = "Income ($)") +
-  theme_minimal()
-
-
-ggplot(income_cen_f, aes(x = `CV (%)`, y = Value, color = Type)) +
-  geom_point(alpha = 0.7, size = 3) +
-  scale_y_continuous(labels = scales::comma) +
-  labs(title = "Value vs Coefficient of Variation (CV %) by Type for Florida",
-       x = "CV (%)",
-       y = "Value ($)",
-       color = "Type") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
-
-
-summary_f_values <- income_cen_f |> group_by(Type) |> summarise(
-  Mean_Value = mean(Value, na.rm = TRUE),
-  Median_Value = median(Value, na.rm = TRUE),
-  SD_Value = sd(Value, na.rm = TRUE),
-  CV_Avg = mean(`CV (%)`, na.rm = TRUE)
-)
-print(summary_f_values)
