@@ -1,0 +1,86 @@
+
+---
+title: "MA415 Homework 1"
+author: "Suakshi Soni"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Exercise 1: Vectors
+
+### 1. Create the vectors
+
+```{r}
+vec_a <- 1:20
+vec_b <- 20:1
+vec_c <- c(1:20, 19:1)
+tmp <- c(4, 6, 3)
+vec_e <- rep(c(4, 6, 3), times = 10)
+vec_f <- c(rep(4, 11), rep(6, 10), rep(3, 10))
+vec_g <- c(rep(4, 10), rep(6, 20), rep(3, 30))
+```
+
+### 2. Vector of e^x * cos(x) from 3 to 6
+
+```{r}
+x_vals <- seq(3, 6, by = 0.1)
+vec_exp_cos <- exp(x_vals) * cos(x_vals)
+vec_exp_cos
+```
+
+### 3. Create vectors
+
+```{r}
+vec_a3 <- (seq(0.13, 0.136, length.out = 5)) ^ (seq(0.21, 0.234, length.out = 5))
+vec_b3 <- (2^(1:25)) / (1:25)
+```
+
+### 4. Calculations
+
+```{r}
+sum((10:100)^3 + 4 * (10:100)^2)
+sum((2*(1:25)) / (1:25) + (3*(1:25)) / ((1:25)^2))
+```
+
+### 5. Create character vectors
+
+```{r}
+labels <- paste("label", 1:30)
+fn_labels <- paste0("fn", 1:30)
+```
+
+### 6. Random vectors
+
+```{r}
+set.seed(50)
+xVec <- sample(0:999, 250, replace = TRUE)
+yVec <- sample(0:999, 250, replace = TRUE)
+
+vec6a <- yVec[2:250] - xVec[1:249]
+vec6b <- sin(yVec[1:249]) / cos(xVec[2:250])
+vec6c <- xVec[1:248] + 2*xVec[2:249] - xVec[3:250]
+sum(exp(-xVec[2:250]) / (xVec[1:249] + 10))
+```
+
+### 7. Analysis on xVec and yVec
+
+```{r}
+y_gt_600 <- yVec[yVec > 600]
+which_y_gt_600 <- which(yVec > 600)
+x_corresponding <- xVec[yVec > 600]
+x_mean <- mean(xVec)
+vec7d <- sqrt(abs(xVec - x_mean))
+within_200 <- sum(abs(yVec - max(yVec)) < 200)
+div_by_2 <- sum(xVec %% 2 == 0)
+x_sorted_by_y <- xVec[order(yVec)]
+y_1_4_7 <- yVec[seq(1, length(yVec), by = 3)]
+```
+
+### 8. Cumulative product expression
+
+```{r}
+terms <- sapply(1:19, function(k) prod(seq(2, by=2, length.out=k)) / prod(seq(3, by=2, length.out=k)))
+sum(terms)
+```
