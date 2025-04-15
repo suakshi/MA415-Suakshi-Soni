@@ -1,0 +1,139 @@
+---
+title: "MA415 Homework 2 - 3.5.7 Exercises"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## 1. Worst Average Delay by Carrier
+
+```{r}
+flights <- nycflights13::flights
+
+# Calculate average departure delay by carrier
+worst_carrier <- flights |>
+  group_by(carrier) |>
+  summarize(avg_delay = mean(dep_delay, na.rm = TRUE)) |>
+  arrange(desc(avg_delay))
+
+worst_carrier
+```
+
+### Challenge: Bad Airports vs. Bad Carriers
+
+We can group by both `carrier` and `dest`:
+
+```{r}
+flights |>
+  group_by(carrier, dest) |>
+  summarize(avg_delay = mean(dep_delay, na.rm = TRUE), n = n()) |>
+  arrange(desc(avg_delay))
+```
+
+It's hard to disentangle bad carriers vs bad airports without controlling for additional variables (like weather, air traffic, etc.).
+
+## 2. Most Delayed Flights by Departure per Destination
+
+```{r}
+flights |>
+  group_by(dest) |>
+  slice_max(order_by = dep_delay, n = 1) |>
+  select(dest, flight, dep_delay)
+```
+
+## 3. Delays Over the Day
+
+```{r}
+flights |>
+  mutate(hour = sched_dep_time %/% 100) |>
+  group_by(hour) |>
+  summarize(avg_delay = mean(dep_delay, na.rm = TRUE)) |>
+  ggplot(aes(x = hour, y = avg_delay)) +
+  geom_line() +
+  labs(title = "Average Departure Delay by Hour", x = "Hour of Day", y = "Avg Departure Delay")
+```
+
+## 4. Negative `n` in `slice_min()` and Friends
+
+A negative `n` in `slice_min()` returns the largest values instead of the smallest — similar to `slice_max()`.
+
+## 5. `count()` Explained
+
+`count()` is equivalent to `group_by()` + `summarize(n = n())`.
+
+The `sort = TRUE` argument sorts the result in descending order of counts.
+
+## 6. Mini Data Frame Examples
+
+```{r}
+df <- tibble(
+  x = 1:5,
+  y = c("a", "b", "a", "a", "b"),
+  z = c("K", "K", "L", "L", "K")
+)
+```
+
+### a. `group_by(y)`
+
+```{r}
+df |>
+  group_by(y)
+```
+
+This groups the data by column `y`, preparing it for grouped operations.
+
+### b. `arrange(y)`
+
+```{r}
+df |>
+  arrange(y)
+```
+
+This **sorts** the rows by `y`, unlike `group_by()` which **groups** for calculations.
+
+### c. `group_by(y) |> summarize(mean_x = mean(x))`
+
+```{r}
+df |>
+  group_by(y) |>
+  summarize(mean_x = mean(x))
+```
+
+Returns the mean of `x` for each group of `y`.
+
+### d. `group_by(y, z) |> summarize(mean_x = mean(x))`
+
+```{r}
+df |>
+  group_by(y, z) |>
+  summarize(mean_x = mean(x))
+```
+
+Returns mean of `x` for each combination of `y` and `z`.
+
+### e. `.groups = "drop"`
+
+```{r}
+df |>
+  group_by(y, z) |>
+  summarize(mean_x = mean(x), .groups = "drop")
+```
+
+Same as above but the result is **ungrouped**.
+
+### f. Compare `summarize()` and `mutate()`
+
+```{r}
+df |>
+  group_by(y, z) |>
+  summarize(mean_x = mean(x))
+
+df |>
+  group_by(y, z) |>
+  mutate(mean_x = mean(x))
+```
+
+`summarize()` collapses rows to group level, while `mutate()` adds a new column without changing row count.
