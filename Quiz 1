@@ -1,0 +1,29 @@
+---
+title: "MA415 Quiz 1– Redone after discussion"
+author: "Suakshi Soni"
+---
+## q1
+C. std should be sd
+This is because the rnorm() function uses the sd argument for standard deviation, not std.
+
+##q2
+A. type = "lines" should be type = "l"
+This is beacuse the type argument in plot() should use "l" to indicate lines. "lines" is not valid.
+
+##q3
+A. Creates a scatter plot with red points of a specific shape
+This is because col = "red" colors the points, and pch = 16 specifies a filled circle shape.
+
+##q4
+B. cbind()
+This is because cbind() binds objects by columns; rbind() binds by rows.
+
+##q5
+A. geom_point() creates scatter plots, while geom_line() connects points with lines
+
+##q6
+set.seed(123)
+x1 <- rnorm(100, mean = 5, sd = 2)
+
+set.seed(123)
+x2 <- rnorm(100, mean = 5, sd = 2)
