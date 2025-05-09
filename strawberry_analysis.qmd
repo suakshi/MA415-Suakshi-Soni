@@ -1,0 +1,118 @@
+
+---
+title: "Do Conventional Strawberries Benefit Producers More Than Consumers?"
+author: "Suakshi Soni"
+date: "2025-05-09"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: true
+    theme: cosmo
+---
+
+## Introduction
+
+Strawberry farming in the United States involves significant chemical input, particularly in conventional systems. California and Florida—key producers—exhibit distinct chemical use and production outcomes. Using USDA NASS Census and Survey data, this analysis investigates whether producers benefit more than consumers from intensified chemical usage.
+
+## Research Question
+
+**Are producers the primary beneficiaries of intensified chemical use in strawberry farming, while consumers bear disproportionate health and financial costs?**
+
+## Data & Methodology
+
+### Data Selection and Filtering
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+
+strawberry <- read_csv("strawb_mar6.csv", show_col_types = FALSE)
+
+# Filter by Program and State
+census <- strawberry |> filter(Program == "CENSUS")
+survey <- strawberry |> filter(Program == "SURVEY")
+
+cen_f <- census |> filter(State == "FLORIDA")
+cen_c <- census |> filter(State == "CALIFORNIA")
+sur_f <- survey |> filter(State == "FLORIDA")
+sur_c <- survey |> filter(State == "CALIFORNIA")
+
+# Chemical use only
+strawb_sur_c <- sur_c |> filter(str_detect(`Domain`, "CHEMICAL"))
+```
+
+### Chemical Classification
+
+```{r}
+strawb_sur_c <- strawb_sur_c |> mutate(commas = str_count(`Data Item`, ","))
+
+strawb_sur_c_3 <- strawb_sur_c |> filter(commas == 3)
+
+# Split by commas
+strawb_sur_c_3 <- strawb_sur_c_3 |> separate(`Data Item`, c("Fruit", "Category", "Item", "Metric"), sep = ",", extra = "merge")
+strawb_sur_c_3 <- strawb_sur_c_3 |> separate(`Domain Category`, c("Domain_1", "Domain Category"), sep = ":", extra = "merge")
+
+# Further split domain for chemical name
+strawb_sur_c_3 <- strawb_sur_c_3 |> separate(Domain, c("Domain", "Chemical"), sep = ",", extra = "merge")
+
+# Clean Value column
+strawb_sur_c_3 <- strawb_sur_c_3 |> filter(Value != "(D)", Value != "(NA)")
+strawb_sur_c_3$Value <- as.numeric(strawb_sur_c_3$Value)
+```
+
+## Chemical Usage Analysis
+
+```{r}
+# Summary by Year and Chemical Type
+summary_by_year_chemical <- strawb_sur_c_3 |> group_by(Year, Chemical) |> summarise(Total_Value = sum(Value, na.rm = TRUE)) |> pivot_wider(names_from = Chemical, values_from = Total_Value)
+
+# Boxplot
+ggplot(strawb_sur_c_3, aes(x = as.factor(Year), y = Value, fill = Chemical)) +
+  geom_boxplot() +
+  labs(title = "Chemical Usage in California (2021–2023)", x = "Year", y = "lb/acre") +
+  theme_minimal()
+```
+
+## Producer Income Analysis
+
+```{r}
+income_cen_c <- cen_c |> filter(Commodity == "INCOME, NET CASH FARM")
+income_cen_f <- cen_f |> filter(Commodity == "INCOME, NET CASH FARM")
+
+# Clean Value
+income_cen_c$Value <- as.numeric(gsub(",", "", income_cen_c$Value)) / 1000
+income_cen_f$Value <- as.numeric(gsub(",", "", income_cen_f$Value)) / 1000
+
+# Density Plot for California
+ggplot(income_cen_c, aes(x = Value)) +
+  geom_density(fill = "lightblue", alpha = 0.5) +
+  labs(title = "Net Income Distribution: California Producers", x = "Income ($ thousands)", y = "Density") +
+  theme_minimal()
+
+# Density Plot for Florida
+ggplot(income_cen_f, aes(x = Value)) +
+  geom_density(fill = "lightgreen", alpha = 0.5) +
+  labs(title = "Net Income Distribution: Florida Producers", x = "Income ($ thousands)", y = "Density") +
+  theme_minimal()
+```
+
+## Conclusion
+
+This analysis finds that **California producers** gain significantly higher incomes from conventional strawberry farming compared to Florida. This is associated with **greater chemical input**, notably fungicides and insecticides.
+
+Meanwhile, **consumers bear hidden costs**, including health risks from residue and high prices for organic alternatives. This underscores a need for **transparency, regulatory reform, and equitable food systems**.
+
+## Limitations & Future Research
+
+- Limited organic data made comparison difficult
+- Consumer price and health exposure data were not included
+- Future work can incorporate toxicity levels, consumer surveys, and explore the impact of regulation
+
+## References
+
+- USDA NASS (2023). Census and Survey Data.  
+- Environmental Working Group (2023). "Dirty Dozen" Report.  
+- CDC (2020). National Report on Chemical Exposure.  
+- EPA (2021). Pesticide Use in Agriculture.  
+- UC Davis (2014). Strawberry Cost Studies.
